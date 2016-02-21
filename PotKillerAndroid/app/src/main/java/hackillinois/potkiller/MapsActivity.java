@@ -5,14 +5,18 @@ package hackillinois.potkiller;
  */
 
 import android.Manifest;
+import android.content.Context;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.hardware.camera2.TotalCaptureResult;
 import android.location.Location;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -48,6 +52,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static final String TAG = MapsActivity.class.getSimpleName();
 
     private SupportMapFragment mapFragment;
+
+    private LatLng potHoleLatLng;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -115,8 +121,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onConnected(Bundle bundle) {
+        int x = 0;
         Log.i(TAG, "Location services connected.");
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    8);
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -124,15 +134,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            return;
+            //return;
         }
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (location == null) {
+        //Log.i("Location is this", location.toString());
+        //if (location == null) {
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        }
-        else {
+        //}
+        //else {
             handleNewLocation(location);
-        }
+        //}
 
     }//end of onConnected method
 
@@ -142,15 +153,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         double currentLatitude = location.getLatitude();
         double currentLongitude = location.getLongitude();
 
+
+
         LatLng latLng = new LatLng(currentLatitude, currentLongitude);
+        potHoleLatLng = new LatLng(currentLatitude, currentLongitude);
 
-        MarkerOptions options = new MarkerOptions()
-                .position(latLng)
-                .title("I am here!");
+//        MarkerOptions options = new MarkerOptions()
+//                .position(latLng)
+//                .title("I am here!");
 
-        Marker potHoleMarker = mMap.addMarker(new MarkerOptions()
-                .position(latLng)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.pothole_marker)));
+//        Marker potHoleMarker = mMap.addMarker(new MarkerOptions()
+//                .position(latLng)
+//                .icon(BitmapDescriptorFactory.fromResource(R.drawable.pothole_marker)));
 
         //mMap.addMarker(options);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18.0f));
@@ -178,11 +192,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //@Override
     public void onStart() {
+
+        client.connect();
+
         super.onStart();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
         Action viewAction = Action.newAction(
                 Action.TYPE_VIEW, // TODO: choose an action type.
                 "Maps Page", // TODO: Define a title for the content shown.
@@ -220,6 +236,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onStop() {
+
+        client.disconnect();
+
         super.onStop();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -235,7 +254,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Uri.parse("android-app://hackillinois.potkiller/http/host/path")
         );
         AppIndex.AppIndexApi.end(client, viewAction);
-        client.disconnect();
     }//end of onStop method
 
     /*this method gets called every time a new location is detected by Google Play Services. So
@@ -260,6 +278,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 setUpMap();
             }
         }
+    }
+
+
+    public void addPothole(View view)
+    {
+        Marker potHoleMarker = mMap.addMarker(new MarkerOptions()
+                .position(potHoleLatLng)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.pothole_marker)));
     }
 
 

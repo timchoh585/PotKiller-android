@@ -14,12 +14,15 @@ import android.widget.ListView;
 public class PotholeListView extends AppCompatActivity
 {
     private Pothole[] potholes;
+    private PotholeListView view;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pothole_list_view);
+
+        view = this;
 
         //Initialize the potholes
         potholes = new Pothole[1];
@@ -39,15 +42,19 @@ public class PotholeListView extends AppCompatActivity
             //When clicked we want to take the user to the video site
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Pothole pothole = (Pothole) parent.getItemAtPosition(position);
-                // Create a Uri from an intent string. Use the result to create an Intent.
-                Uri gmmIntentUri = Uri.parse("google.streetview:cbll=46.414382,10.013988");
-                // Create an Intent from gmmIntentUri. Set the action to ACTION_VIEW
-                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                // Make the Intent explicit by setting the Google Maps package
-                mapIntent.setPackage("com.google.android.apps.maps");
+//                // Create a Uri from an intent string. Use the result to create an Intent.
+//                Uri gmmIntentUri = Uri.parse("google.streetview:cbll=46.414382,10.013988");
+//                // Create an Intent from gmmIntentUri. Set the action to ACTION_VIEW
+//                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+//                // Make the Intent explicit by setting the Google Maps package
+//                mapIntent.setPackage("com.google.android.apps.maps");
+//
+//                // Attempt to start an activity that can handle the Intent
+//                startActivity(mapIntent);
 
-                // Attempt to start an activity that can handle the Intent
-                startActivity(mapIntent);
+                Intent intent = new Intent(PotholeListView.this, MapsActivity.class);
+                startActivity(intent);
+
             }
         });
     }
