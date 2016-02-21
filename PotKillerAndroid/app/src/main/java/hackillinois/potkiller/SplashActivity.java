@@ -15,9 +15,24 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         //Need to make the splash screen longer
+       Thread mSplashThread = new Thread() {
 
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-        finish();
+            @Override
+            public void run() {
+                synchronized (this) {
+                    try {
+                        wait(2000);
+                    } catch (InterruptedException e) {
+                    } finally {
+                        finish();
+                        Intent intent = new Intent(getBaseContext(),
+                                MainActivity.class);
+                        startActivity(intent);
+                    }
+                }
+            }
+
+        };
+        mSplashThread.start();
     }
 }
