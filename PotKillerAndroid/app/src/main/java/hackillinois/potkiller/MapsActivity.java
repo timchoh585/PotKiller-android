@@ -3,11 +3,13 @@ package hackillinois.potkiller;
 /**
  * Created by tim on 2/20/16.
  */
+
 import android.Manifest;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,7 +35,7 @@ import java.util.List;
 
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,LocationListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private GoogleMap mMap;
 
@@ -95,14 +97,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         List<LatLng> phList = new ArrayList<LatLng>();
-        phList.add(new LatLng(41.731761385122475,-87.5706654589236));
+        phList.add(new LatLng(41.731761385122475, -87.5706654589236));
         phList.add(new LatLng(41.73177978681613, -87.56935929776198));
         phList.add(new LatLng(41.733668791729684, -87.56474000310423));
         phList.add(new LatLng(41.959681070697954, -87.8422225234499));
         phList.add(new LatLng(41.98979545201402, -87.74716946918689));
 
         int i = 0;
-        for(i = 0; i < phList.size(); i++){
+        for (i = 0; i < phList.size(); i++) {
             Marker potHoleMarker = mMap.addMarker(new MarkerOptions()
                     .position(phList.get(i))
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.pothole_marker)));
@@ -114,6 +116,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onConnected(Bundle bundle) {
         Log.i(TAG, "Location services connected.");
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (location == null) {
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
@@ -179,7 +191,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // Otherwise, set the URL to null.
                 Uri.parse("http://host/path"),
                 // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://com.example.jackie1.myapplication/http/host/path")
+                Uri.parse("android-app://hackillinois.potkiller/http/host/path")
         );
         AppIndex.AppIndexApi.start(client, viewAction);
     }//end of onStart method
@@ -220,7 +232,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 // Otherwise, set the URL to null.
                 Uri.parse("http://host/path"),
                 // TODO: Make sure this auto-generated app deep link URI is correct.
-                Uri.parse("android-app://com.example.jackie1.myapplication/http/host/path")
+                Uri.parse("android-app://hackillinois.potkiller/http/host/path")
         );
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();

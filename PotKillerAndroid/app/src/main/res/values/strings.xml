@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">PotKiller</string>
     <string name="title_activity_maps">Map</string>
+    <string name="google_app_id">963902167616</string>
 </resources>
